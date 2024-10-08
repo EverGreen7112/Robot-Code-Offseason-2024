@@ -27,8 +27,6 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
 
-  private Field2d m_field; 
-  private Field2d m_odometryField;
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
