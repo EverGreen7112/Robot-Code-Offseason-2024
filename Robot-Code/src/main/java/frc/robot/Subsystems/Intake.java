@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Intake extends SubsystemBase{
     private static Intake m_instance;
     private CANSparkMax m_sparkMax;
-    private final double m_speed = 0.3;
 
     private Intake(){
         m_sparkMax = new CANSparkMax(0,MotorType.kBrushless);
@@ -28,6 +27,10 @@ public class Intake extends SubsystemBase{
 
     public void stopIntake(){
         m_sparkMax.set(0);
+    }
+
+    public void noteEmission(){
+        m_sparkMax.set(-1);
     }
 
     public void idleMode(IdleMode idleMode){
