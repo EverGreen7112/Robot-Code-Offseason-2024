@@ -7,7 +7,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase{
-    private Intake m_instance;
+    private static Intake m_instance;
     private CANSparkMax m_sparkMax;
     private final double m_speed = 0.3;
 
@@ -16,7 +16,7 @@ public class Intake extends SubsystemBase{
         m_sparkMax.restoreFactoryDefaults();
     }
 
-    public Intake getInstance(){
+    public static Intake getInstance(){
         if (m_instance == null)
             return m_instance;
         return m_instance;
