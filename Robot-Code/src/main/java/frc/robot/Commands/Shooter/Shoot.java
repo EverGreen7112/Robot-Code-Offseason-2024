@@ -1,16 +1,16 @@
-package frc.robot.Commands;
+package frc.robot.Commands.Shooter;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.Shooter;
 
-public class ShooterIntake extends CommandBase{
+public class Shoot extends CommandBase {
 
-    public ShooterIntake(){
+    public Shoot(){
         addRequirements(Shooter.getInstance());
     }
 
     public void initialize(){
-        Shooter.getInstance().intake();
+        Shooter.getInstance().shoot();
     }
 
     public boolean isFinished(){
