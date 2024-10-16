@@ -11,6 +11,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Utils.Math.SwervePoint;
 
 public class Shooter extends SubsystemBase {
     
@@ -21,6 +22,9 @@ public class Shooter extends SubsystemBase {
     private PIDController m_PidController;
     private final double M_WHEEL_PERIMETER = 0,
                          M_MIN_ANGLE = -49, M_MAX_ANGLE = 180;
+    private final double BLUE_SPEAKER_X = 0, BLUE_SPEAKER_Y = 0,
+                         RED_SPEAKER_X = 0, RED_SPEAKER_Y = 0,
+                         SPEAKER_H = 0;
 
 
     private Shooter(){
@@ -87,5 +91,25 @@ public class Shooter extends SubsystemBase {
         m_PidController.setSetpoint(MathUtil.clamp(angle, M_MIN_ANGLE, M_MAX_ANGLE));        
     }
 
-    
+    public void autoAim(){
+        double targetAngle, distance;
+        SwervePoint pos = getPos();
+        if(isBlue()){
+            distance = Math.sqrt(Math.pow(pos.getX() - BLUE_SPEAKER_X,2) + Math.pow(pos.getY() - BLUE_SPEAKER_Y,2));
+        }
+        else{
+            distance = Math.sqrt(Math.pow(RED_SPEAKER_X - pos.getX(),2) + Math.pow(RED_SPEAKER_Y - pos.getY(),2));
+        }
+        targetAngle = Math.toDegrees(Math.atan2(distance , SPEAKER_H));
+        turnTo(targetAngle);
+        
+    }
+
+    public static boolean isBlue(){
+        return true;
+    }
+
+    public static SwervePoint getPos(){
+        return new SwervePoint(0, 0, 0);
+    }
 }
