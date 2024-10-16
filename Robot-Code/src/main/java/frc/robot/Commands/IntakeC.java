@@ -3,15 +3,24 @@ package frc.robot.Commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems.Intake;
 
-public class Emission extends CommandBase{
-    
+public class IntakeC extends CommandBase{
 
-    public Emission(){
+    public IntakeC(){
         addRequirements(Intake.getInstance());
     }
 
+
+    @Override
     public void initialize(){
-        Intake.getInstance().noteEmission();
+        Intake.getInstance().noteIntake();
     }
 
+    @Override
+    public boolean isFinished(){
+        return true;
+    }
+
+
+
+    
 }
