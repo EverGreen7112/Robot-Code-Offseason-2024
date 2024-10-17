@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climb extends SubsystemBase {
@@ -12,14 +13,18 @@ public class Climb extends SubsystemBase {
     private CANSparkMax m_motorL, m_motorR;
     private DigitalInput m_limitSwitchR, m_limitSwitchL;
     private final double SPEED = 0.4,
-                    MAX_L = 0, MAX_R = 0;
+                    MAX_L_POS = 0, MAX_R_POS = 0;
 
     private Climb(){
         m_motorL = new CANSparkMax(1, MotorType.kBrushless);
         m_motorR = new CANSparkMax(2, MotorType.kBrushless);
+
+        m_motorL.restoreFactoryDefaults();
+        m_motorR.restoreFactoryDefaults();
+
         m_limitSwitchL = new DigitalInput(0);
         m_limitSwitchR = new DigitalInput(1);
-        //m_motorR.getEncoder().setPositionConversionFactor();
+        
 
     }
 
@@ -30,29 +35,41 @@ public class Climb extends SubsystemBase {
     }
 
 
-    public boolean getLimitR(){
-        return m_limitSwitchR.get();
+    public boolean isRightAtBottom(){
+        return !m_limitSwitchR.get();
     }
     
 
-    public boolean getLimitL(){
-        return m_limitSwitchL.get();
+    public boolean isLeftAtBottom(){
+        return !m_limitSwitchL.get();
     }
 
-    public void ExtendRight(){
-        m_motorR.set(SPEED);
+    public void extendRight(){
+        if(m_motorR.getEncoder().getPosition() < MAX_R_POS)
+            m_motorR.set(SPEED);
+        else
+            stopRight();
     }
     
-    public void ExtendLeft(){
-        m_motorL.set(SPEED);
+    public void extendLeft(){
+        if(m_motorL.getEncoder().getPosition() < MAX_L_POS)
+            m_motorL.set(SPEED);
+        else
+            stopLeft();
     }
 
     public void retractLeft(){
-        m_motorL.set(-SPEED);
+        if(isLeftAtBottom())
+            m_motorL.set(-SPEED);
+        else
+            stopLeft();
     }
 
     public void retractRight(){
-        m_motorR.set(-SPEED);
+        if(isRightAtBottom())
+            m_motorR.set(-SPEED);
+        else
+            stopRight();
     }
 
     public void stopRight(){
@@ -65,9 +82,10 @@ public class Climb extends SubsystemBase {
 
     @Override
     public void periodic(){
-        if(m_motorR.getEncoder().getPosition() == MAX_R || getLimitR())
-            stopRight();
-        if(m_motorL.getEncoder().getPosition() == MAX_L || getLimitL())
-            stopLeft();
+        //logs for debugging 
+        SmartDashboard.putNumber("left climber pos", m_motorR.getEncoder().getPosition());
+        SmartDashboard.putNumber("right climber pos", m_motorR.getEncoder().getPosition());
+        SmartDashboard.putBoolean("left climber limitswitch", isLeftAtBottom());
+        SmartDashboard.putBoolean("right climber limitswitch", isRightAtBottom());
     }
 }
