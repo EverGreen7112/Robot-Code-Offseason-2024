@@ -17,8 +17,8 @@ public class Climb extends SubsystemBase {
    
 
     private Climb(){
-        m_motorL = new CANSparkMax(1, MotorType.kBrushless);
-        m_motorR = new CANSparkMax(2, MotorType.kBrushless);
+        m_motorL = new CANSparkMax(61, MotorType.kBrushless);
+        m_motorR = new CANSparkMax(15, MotorType.kBrushless);
 
         m_motorL.restoreFactoryDefaults();
         m_motorR.restoreFactoryDefaults();

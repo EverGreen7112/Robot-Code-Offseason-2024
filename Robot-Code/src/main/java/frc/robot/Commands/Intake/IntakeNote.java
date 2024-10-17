@@ -17,8 +17,10 @@ public class IntakeNote extends Command{
 
     @Override
     public void execute(){
-        if(Shooter.getInstance().readyToIntake())
+        if(Shooter.getInstance().readyToIntake()){
             Intake.getInstance().intakeNote();
+            Shooter.getInstance().intakeNote();
+        }
     }
 
     @Override
@@ -29,6 +31,7 @@ public class IntakeNote extends Command{
     @Override
     public void end(boolean interrupted) {
         Intake.getInstance().stop();
+        Shooter.getInstance().stopIntake();
     }
 
     

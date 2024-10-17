@@ -11,7 +11,7 @@ public class Intake extends SubsystemBase{
     private CANSparkMax m_motor;
 
     private Intake(){
-        m_motor = new CANSparkMax(0, MotorType.kBrushless);
+        m_motor = new CANSparkMax(19, MotorType.kBrushless);
         m_motor.restoreFactoryDefaults();
     }
 
