@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Subsystems.Shooter;
 import frc.robot.Utils.EverKit.Periodic;
 import frc.robot.Utils.Math.Funcs;
 import frc.robot.Utils.Math.Vector2d;
@@ -45,7 +46,7 @@ public class Robot extends TimedRobot {
         e.printStackTrace();
       }
     }
-
+    // SmartDashboard.putNumber("shooter angle", Shooter.getInstance().get);
   }
 
   @Override
