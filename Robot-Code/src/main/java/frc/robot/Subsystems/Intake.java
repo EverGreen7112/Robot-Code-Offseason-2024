@@ -1,40 +1,34 @@
 package frc.robot.Subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase{
-    private static Intake m_instance;
-    private CANSparkMax m_sparkMax;
+    private final double SPEED = 0.6;
+    private static Intake m_instance = new Intake();
+    private CANSparkMax m_motor;
 
     private Intake(){
-        m_sparkMax = new CANSparkMax(0,MotorType.kBrushless);
-        m_sparkMax.restoreFactoryDefaults();
+        m_motor = new CANSparkMax(0, MotorType.kBrushless);
+        m_motor.restoreFactoryDefaults();
     }
 
     public static Intake getInstance(){
-        if (m_instance == null)
-            return m_instance;
         return m_instance;
     }
 
-    public void noteIntake(){
-        m_sparkMax.set(1.0);
+    public void intakeNote(){
+        m_motor.set(SPEED);
     }
 
-    public void stopIntake(){
-        m_sparkMax.set(0);
+    public void stop(){
+        m_motor.set(0);
     }
 
-    public void noteEmission(){
-        m_sparkMax.set(-1);
-    }
-
-    public void idleMode(IdleMode idleMode){
-        m_sparkMax.setIdleMode(idleMode);
+    public void emitNote(){
+        m_motor.set(-SPEED);
     }
     
 }

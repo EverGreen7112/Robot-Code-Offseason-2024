@@ -11,6 +11,8 @@ import frc.robot.Commands.Climber.ExtendLeft;
 import frc.robot.Commands.Climber.ExtendRight;
 import frc.robot.Commands.Climber.RetractLeft;
 import frc.robot.Commands.Climber.RetractRight;
+import frc.robot.Commands.Intake.EmitNote;
+import frc.robot.Commands.Intake.IntakeNote;
 
 public class RobotContainer {
   private static final int CHASSIS_PORT = 0;
@@ -25,6 +27,10 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+
+    //intake
+    operator.a().whileTrue(new IntakeNote());
+    operator.back().whileTrue(new EmitNote());
 
     //climber
     operator.rightBumper().whileTrue(new ExtendRight());

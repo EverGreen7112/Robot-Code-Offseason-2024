@@ -8,12 +8,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climb extends SubsystemBase {
-
-    private static Climb m_climb;
-    private CANSparkMax m_motorL, m_motorR;
-    private DigitalInput m_limitSwitchR, m_limitSwitchL;
     private final double SPEED = 0.4,
                     MAX_L_POS = 0, MAX_R_POS = 0;
+
+    private static Climb m_instance = new Climb();
+    private CANSparkMax m_motorL, m_motorR;
+    private DigitalInput m_limitSwitchR, m_limitSwitchL;
+   
 
     private Climb(){
         m_motorL = new CANSparkMax(1, MotorType.kBrushless);
@@ -29,9 +30,7 @@ public class Climb extends SubsystemBase {
     }
 
     public static Climb getInstance(){
-        if(m_climb == null)
-            m_climb = new Climb();
-        return m_climb;
+        return m_instance;
     }
 
 
