@@ -18,9 +18,12 @@ public class IntakeNote extends Command{
     @Override
     public void execute(){
         if(Shooter.getInstance().readyToIntake()){
-            Intake.getInstance().intakeNote();
-            Shooter.getInstance().intakeNote();
+            // Intake.getInstance().intakeNote();
+            // Shooter.getInstance().intakeNote();
         }
+        Intake.getInstance().intakeNote();
+
+        Shooter.getInstance().intakeNote();
     }
 
     @Override

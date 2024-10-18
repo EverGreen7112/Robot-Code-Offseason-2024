@@ -31,7 +31,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
-    
+    Shooter.getInstance();
 
 
   }
@@ -86,16 +86,8 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    new Thread(() ->{
-      
-      try {
-        Thread.sleep(1);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
 
-
-    }).start();
+    Shooter.getInstance().m_pivotMotor.set(0.1);
 
     
   }

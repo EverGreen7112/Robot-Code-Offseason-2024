@@ -3,29 +3,32 @@ package frc.robot.Subsystems;
 import java.util.function.Supplier;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Utils.Math.Funcs;
 import frc.robot.Utils.Math.SwervePoint;
 
 public class Shooter extends SubsystemBase {
     private final double 
 
                          INTAKE_SPEED = 0.5, CONTAINMENT_SPEED = 0.5, SHOOT_SPEED = 1, 
-                         MIN_ANGLE = -49, MAX_ANGLE = 180,
-                         BLUE_SPEAKER_X = 0, BLUE_SPEAKER_Y = 0,
-                         RED_SPEAKER_X = 0, RED_SPEAKER_Y = 0,
-                         SPEAKER_H = 0;
+                         MIN_ANGLE = -49, MAX_ANGLE = 130,
+                         BLUE_SPEAKER_X = 0, BLUE_SPEAKER_Y = 5.8928 + (0.01 * (15 * 2.54)),
+                         RED_SPEAKER_X = 16.54, RED_SPEAKER_Y = 5.8928 + (0.01 * (15 * 2.54)),
+                         SPEAKER_H = 2.1;
 
     private static Shooter m_instance = new Shooter();
-    private CANSparkMax m_pivotMotor, m_leftShoot, m_rightShoot, m_containmentMotor;
+    public CANSparkMax m_pivotMotor, m_leftShoot, m_rightShoot, m_containmentMotor;
     private Supplier <Double> m_pivotAngle;
     private DutyCycleEncoder m_pivotEncoder;
     private PIDController m_angleController;
-    
+    private double m_targetAngle;
 
 
     private Shooter(){
@@ -39,23 +42,27 @@ public class Shooter extends SubsystemBase {
         m_containmentMotor = new CANSparkMax(7, MotorType.kBrushless);
         m_pivotMotor.restoreFactoryDefaults();
         m_containmentMotor.restoreFactoryDefaults();
-
+        m_containmentMotor.setInverted(true);
+        m_pivotMotor.setIdleMode(IdleMode.kCoast);
         m_pivotEncoder = new DutyCycleEncoder(0);
         m_pivotEncoder.setDistancePerRotation(-1 * 360); //set conversion ratio 
         m_pivotEncoder.setPositionOffset(0.222401380560035);
 
-        m_angleController = new PIDController(0.0111,  0.000001901, 0.00015);
+        m_angleController = new PIDController(0.0111,  0.0000019, 0.00015);
 
-        m_pivotAngle = (m_pivotEncoder::getDistance);
-
-        
-
+        m_pivotAngle = () -> {return m_pivotEncoder.getDistance();};
+        // m_angleController.setTolerance(2);
+        m_targetAngle = MIN_ANGLE;
 
     }
 
+    
+
     @Override
     public void periodic(){
-        m_pivotMotor.set(MathUtil.clamp(m_angleController.calculate(m_pivotAngle.get()), -0.3, 0.3));
+        SmartDashboard.putNumber("shooter angle", m_pivotAngle.get());
+        m_angleController.setSetpoint(m_targetAngle);
+        m_pivotMotor.set(-1 * MathUtil.clamp(m_angleController.calculate(m_pivotAngle.get()), -0.5, 0.5));
     }
 
     public static Shooter getInstance(){
@@ -77,7 +84,11 @@ public class Shooter extends SubsystemBase {
     public void shoot(){
         m_rightShoot.set(SHOOT_SPEED);
         m_leftShoot.set(SHOOT_SPEED);
+    }
 
+    public void shootToAmp(){
+        m_rightShoot.set(0.2);
+        m_leftShoot.set(0.2);
     }
 
     public void stopShoot(){
@@ -111,7 +122,7 @@ public class Shooter extends SubsystemBase {
 
     public void turnTo(double angle){
         m_angleController.reset();//reset the I
-        m_angleController.setSetpoint(MathUtil.clamp(angle, MIN_ANGLE, MAX_ANGLE));        
+        m_targetAngle = MathUtil.clamp(angle, MIN_ANGLE, MAX_ANGLE);        
     }
 
     public void turnToIntake(){
@@ -119,7 +130,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public boolean readyToIntake(){
-        return MathUtil.isNear(MIN_ANGLE, m_pivotAngle.get(), 1); //is the shooter at the bottom
+        return MathUtil.isNear(MIN_ANGLE, m_pivotAngle.get(), 3); //is the shooter at the bottom
     }
 
     public void autoAim(){

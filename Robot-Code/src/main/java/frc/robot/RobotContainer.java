@@ -13,6 +13,11 @@ import frc.robot.Commands.Climber.RetractLeft;
 import frc.robot.Commands.Climber.RetractRight;
 import frc.robot.Commands.Intake.EmitNote;
 import frc.robot.Commands.Intake.IntakeNote;
+import frc.robot.Commands.Shooter.ChargeShooter;
+import frc.robot.Commands.Shooter.ChargeShooterToAmp;
+import frc.robot.Commands.Shooter.ReleaseNote;
+import frc.robot.Commands.Shooter.TurnShooterTo;
+import frc.robot.Subsystems.Shooter;
 
 public class RobotContainer {
   private static final int CHASSIS_PORT = 0;
@@ -30,13 +35,16 @@ public class RobotContainer {
 
     //intake
     operator.a().whileTrue(new IntakeNote());
+    operator.b().onTrue(new TurnShooterTo(98));
     operator.back().whileTrue(new EmitNote());
+    operator.y().whileTrue(new ChargeShooterToAmp());
+    operator.x().whileTrue(new ReleaseNote());
 
     //climber
-    operator.rightBumper().whileTrue(new ExtendRight());
-    operator.leftBumper().whileTrue(new ExtendLeft());
-    operator.rightTrigger().whileTrue(new RetractRight());
-    operator.leftTrigger().whileTrue(new RetractLeft());
+    operator.rightBumper().whileTrue(new ExtendRight());//RB
+    operator.leftBumper().whileTrue(new ExtendLeft());//LB
+    operator.rightTrigger().whileTrue(new RetractRight());//RT
+    operator.leftTrigger().whileTrue(new RetractLeft());//RL
 
   }
 
