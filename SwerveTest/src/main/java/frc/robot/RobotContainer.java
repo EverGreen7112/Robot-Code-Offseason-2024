@@ -24,6 +24,7 @@ import frc.robot.Commands.Climb.RetractRight;
 import frc.robot.Commands.Intake.EmitNote;
 import frc.robot.Commands.Intake.IntakeNote;
 import frc.robot.Commands.Shooter.ShootToAmp;
+import frc.robot.Commands.Shooter.AutomaticShootToSpeaker;
 import frc.robot.Commands.Shooter.ReleaseNote;
 import frc.robot.Commands.Shooter.ShootFromSideOfAmp;
 import frc.robot.Commands.Shooter.TurnShooterTo;
@@ -88,14 +89,13 @@ public class RobotContainer {
                                                                               
     NamedCommands.registerCommand("start shoot from side of amp", new InstantCommand(() -> {Shooter.getInstance().turnTo(113);}).andThen(new ShootFromSideOfAmp().withTimeout(2)));
     NamedCommands.registerCommand("release note", new ReleaseNote().withTimeout(0.5));
-
   
     //intake
     operator.a().whileTrue(new IntakeNote());
     operator.b().whileTrue(new ReleaseNote());
     operator.start().whileTrue(new EmitNote());
     operator.x().whileTrue(new ShootToAmp());
-    operator.y().whileTrue(new InstantCommand(() -> {Shooter.getInstance().autoAim();}));
+    operator.y().whileTrue(new AutomaticShootToSpeaker());
 
     //climber
     operator.rightBumper().whileTrue(new ExtendRight());//RB

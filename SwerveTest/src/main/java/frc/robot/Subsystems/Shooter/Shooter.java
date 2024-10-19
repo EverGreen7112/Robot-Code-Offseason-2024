@@ -9,8 +9,12 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
+import frc.robot.Subsystems.Swerve.Swerve;
+import frc.robot.Subsystems.Swerve.SwerveLocalizer;
 import frc.robot.Subsystems.Swerve.SwervePoint;
 import frc.robot.Utils.Math.Funcs;
 
@@ -21,7 +25,7 @@ public class Shooter extends SubsystemBase {
                          MIN_ANGLE = -49, MAX_ANGLE = 130,
                          BLUE_SPEAKER_X = 0, BLUE_SPEAKER_Y = 5.8928 + (0.01 * (15 * 2.54)),
                          RED_SPEAKER_X = 16.54, RED_SPEAKER_Y = 5.8928 + (0.01 * (15 * 2.54)),
-                         SPEAKER_H = 2.1;
+                         SPEAKER_H = 3.5;
 
     private static Shooter m_instance = new Shooter();
     public CANSparkMax m_pivotMotor, m_leftShoot, m_rightShoot, m_containmentMotor;
@@ -29,7 +33,6 @@ public class Shooter extends SubsystemBase {
     private DutyCycleEncoder m_pivotEncoder;
     private PIDController m_angleController;
     private double m_targetAngle;
-
 
     private Shooter(){
         m_leftShoot = new CANSparkMax(1, MotorType.kBrushless);
@@ -43,15 +46,15 @@ public class Shooter extends SubsystemBase {
         m_pivotMotor.restoreFactoryDefaults();
         m_containmentMotor.restoreFactoryDefaults();
         m_containmentMotor.setInverted(true);
-        m_pivotMotor.setIdleMode(IdleMode.kCoast);
+        m_pivotMotor.setIdleMode(IdleMode.kBrake);
         m_pivotEncoder = new DutyCycleEncoder(0);
         m_pivotEncoder.setDistancePerRotation(-1 * 360); //set conversion ratio 
         m_pivotEncoder.setPositionOffset(0.222401380560035);
 
-        m_angleController = new PIDController(0.0075,  0.0000019, 0.0001);
+        m_angleController = new PIDController(0.0045,  0.0000015, 0.00018);
 
         m_pivotAngle = () -> {return m_pivotEncoder.getDistance();};
-        // m_angleController.setTolerance(2);
+        m_angleController.setTolerance(3);
         m_targetAngle = MIN_ANGLE;
 
     }
@@ -60,9 +63,10 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic(){
-        SmartDashboard.putNumber("shooter angle", m_pivotAngle.get());
+        
         m_angleController.setSetpoint(m_targetAngle);
         m_pivotMotor.set(-1 * MathUtil.clamp(m_angleController.calculate(m_pivotAngle.get()), -0.25, 0.25));
+        
     }
 
     public static Shooter getInstance(){
@@ -144,23 +148,19 @@ public class Shooter extends SubsystemBase {
 
     public void autoAim(){
         double targetAngle, distance;
-        SwervePoint pos = getPos();
-        if(isBlue()){
+        SwervePoint pos = SwerveLocalizer.getInstance().getCurrentPoint();
+        if(Robot.getAlliance() == Alliance.Blue){
             distance = Math.sqrt(Math.pow(pos.getX() - BLUE_SPEAKER_X,2) + Math.pow(pos.getY() - BLUE_SPEAKER_Y,2));
         }
         else{
             distance = Math.sqrt(Math.pow(RED_SPEAKER_X - pos.getX(),2) + Math.pow(RED_SPEAKER_Y - pos.getY(),2));
         }
-        targetAngle = Math.toDegrees(Math.atan2(distance , SPEAKER_H));
+        
+
+        targetAngle = Math.toDegrees(Math.atan2(SPEAKER_H , distance));
         turnTo(targetAngle);
         
     }
 
-    public static boolean isBlue(){
-        return true;
-    }
 
-    public static SwervePoint getPos(){
-        return new SwervePoint(0, 0, 0);
-    }
 }

@@ -3,11 +3,12 @@ package frc.robot.Commands.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems.Shooter.Shooter;
 
-public class ChargeShooter extends Command {
+public class ShootToSpeaker extends Command {
 
-    public ChargeShooter(){}
+    public ShootToSpeaker(){}
 
     public void initialize(){
+        Shooter.getInstance().turnTo(130);
         Shooter.getInstance().shoot();
     }
 
