@@ -36,12 +36,12 @@ import frc.robot.Commands.Shooter.ShootFromNotSideOfAmp;
 import frc.robot.Commands.Shooter.ShootFromSideOfAmp;
 import frc.robot.Commands.Shooter.TurnShooterTo;
 import frc.robot.Commands.Swerve.DriveByJoysticks;
+import frc.robot.Commands.Swerve.DriveByJoysticks.SpeedMode;
 import frc.robot.Subsystems.Intake.Intake;
 import frc.robot.Subsystems.Shooter.Shooter;
 import frc.robot.Subsystems.Swerve.Swerve;
 import frc.robot.Subsystems.Swerve.SwerveConsts;
-import frc.robot.Subsystems.Swerve.SwitchMode;
-import frc.robot.Subsystems.Swerve.SwitchMode.SpeedMode;
+import frc.robot.Subsystems.Swerve.SwitchSpeedMode;
 import frc.robot.Utils.Math.SwerveToWpi;
 
 public class RobotContainer {
@@ -65,8 +65,12 @@ public class RobotContainer {
   public static final Trigger operatorRT = operator.rightTrigger();
   public static final Trigger operatorLT = operator.leftTrigger();
   public static final Trigger operatorStart = operator.start();
+
   public static final Trigger chassisStart = chassis.start();
+  public static final Trigger chassisBack = chassis.back();
   public static final Trigger chassisA = chassis.a();
+  public static final Trigger chassisRT = chassis.rightTrigger();
+  public static final Trigger chassisLT = chassis.leftTrigger();
 
   public static final Command shootToAmpCommand = new ShootToAmp();
   public static final Command shootToSpeakerCommand = new ShootToSpeaker();
@@ -131,9 +135,9 @@ public class RobotContainer {
     DriveByJoysticks teleop = new DriveByJoysticks(() -> chassis.getLeftX(), () -> chassis.getLeftY(),
       () -> chassis.getRightX(), () -> chassisStart.getAsBoolean(), () -> chassisA.getAsBoolean());
     
-     chassis.back().onTrue(new InstantCommand(() -> {Swerve.getInstance().resetGyro();}));
-      chassis.y().whileTrue(new SwitchMode(SpeedMode.kTurbo));
-      chassis.x().whileTrue(new SwitchMode(SpeedMode.kSlow));
+    chassisBack.onTrue(new InstantCommand(() -> {Swerve.getInstance().resetGyro();}));
+    chassisRT.whileTrue(new SwitchSpeedMode(SpeedMode.kTurbo));
+    chassisLT.whileTrue(new SwitchSpeedMode(SpeedMode.kSlow));
      Swerve.getInstance().setDefaultCommand(teleop);
     
     //operator
@@ -149,10 +153,6 @@ public class RobotContainer {
     operatorLT.whileTrue(retractLeftClimberCommand);//LT
     operatorPovRight.whileTrue(new AlternateAutoShootToSpeaker());
 
-    
-
-    
-    
 
   }
 

@@ -13,12 +13,19 @@ import frc.robot.Utils.Math.Funcs;
 import frc.robot.Utils.Math.Vector2d;
 
 public class DriveByJoysticks extends Command{
+    
+    public enum SpeedMode{
+        kNormal,
+        kTurbo,
+        kSlow
+    }    
 
-    private double JOYSTICK_DEADZONE = 0.2;
+
+    private final double JOYSTICK_DEADZONE = 0.2;
+    private static double m_maxDriveSpeed = SwerveConsts.MAX_NORMAL_DRIVE_SPEED;
     private Supplier<Double> m_speedX, m_speedY, m_rotation;
     private Supplier<Boolean> m_activateAnglePID;
     private Supplier<Boolean> m_activateTurnToSpeaker;
-    
     private boolean m_lastActivateAnglePID;
     private PIDController m_angleController;
     
@@ -31,6 +38,7 @@ public class DriveByJoysticks extends Command{
         m_lastActivateAnglePID = activateAnglePID.get();
         m_angleController = new PIDController(0.02, 0, 0.0);
         m_activateTurnToSpeaker = activateTurnToSpeaker;
+        m_maxDriveSpeed = SwerveConsts.MAX_NORMAL_DRIVE_SPEED;
     }
 
     @Override
@@ -39,6 +47,8 @@ public class DriveByJoysticks extends Command{
 
     @Override
     public void execute() {
+        
+
         //get values from suppliers
         double speedX = m_speedX.get();
         double speedY = m_speedY.get();
@@ -76,17 +86,27 @@ public class DriveByJoysticks extends Command{
         m_lastActivateAnglePID = m_activateAnglePID.get();
 
         //create drive vector
-        Vector2d vec = new Vector2d(-speedX * SwerveConsts.MAX_DRIVE_SPEED.get(), speedY * SwerveConsts.MAX_DRIVE_SPEED.get());
+        Vector2d vec = new Vector2d(-speedX * m_maxDriveSpeed, speedY * m_maxDriveSpeed);
         
-        //make sure mag never goes over 1 so driving in all directions will be the same speed
-        if(vec.mag() > Swerve.MAX_DRIVE_SPEED.get()){
+        //make sure mag never goes over maxDriveSpeed so driving in all directions will be the same speed
+        if(vec.mag() > m_maxDriveSpeed){
             vec.normalise();
-            vec.mul(Swerve.MAX_DRIVE_SPEED.get());
+            vec.mul(m_maxDriveSpeed);
         }
 
         //drive
-        Swerve.getInstance().drive(Funcs.convertFromStandardAxesToWpilibs(vec), true, -rotation * SwerveConsts.MAX_ANGULAR_SPEED.get());       
+        Swerve.getInstance().drive(Funcs.convertFromStandardAxesToWpilibs(vec), true, -rotation * SwerveConsts.MAX_ANGULAR_SPEED);       
     }
 
-
+    public static void setSpeedMode(SpeedMode speedMode){
+        if(speedMode == SpeedMode.kTurbo){
+            m_maxDriveSpeed = SwerveConsts.MAX_TURBO_DRIVE_SPEED;
+        }
+        else if(speedMode == SpeedMode.kSlow){
+            m_maxDriveSpeed = SwerveConsts.MAX_SLOW_DRIVE_SPEED;
+        }
+        else{
+            m_maxDriveSpeed = SwerveConsts.MAX_NORMAL_DRIVE_SPEED;
+        }
+    }
 }
