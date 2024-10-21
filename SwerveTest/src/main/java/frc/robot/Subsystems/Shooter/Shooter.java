@@ -19,6 +19,7 @@ import frc.robot.Subsystems.Swerve.SwerveLocalizer;
 import frc.robot.Subsystems.Swerve.SwervePoint;
 import frc.robot.Utils.Math.Funcs;
 import frc.robot.Utils.Math.LinearInterpolation;
+import frc.robot.Utils.Math.Point;
 
 public class Shooter extends SubsystemBase {
     private final double 
@@ -66,6 +67,8 @@ public class Shooter extends SubsystemBase {
         m_angleController.setTolerance(3);
         m_targetAngle = MIN_ANGLE;
 
+        m_distanceToAngle = new LinearInterpolation(new Point(2.05, 52), new Point(1.52, 62), new Point(1.1, 66), new Point(1.8, 58.5));
+
     }
 
     
@@ -75,6 +78,16 @@ public class Shooter extends SubsystemBase {
         m_angleController.setSetpoint(m_targetAngle);
         m_pivotMotor.set(-1 * MathUtil.clamp(m_angleController.calculate(m_pivotAngle.get()), -0.26, 0.26));
         
+
+        double targetAngle, distance;
+        SwervePoint pos = SwerveLocalizer.getInstance().getCurrentPoint();
+        if(Robot.getAlliance() == Alliance.Blue){
+            distance = Math.sqrt(Math.pow(pos.getX() - BLUE_SPEAKER_X,2) + Math.pow(pos.getY() - BLUE_SPEAKER_Y,2));
+        }
+        else{
+            distance = Math.sqrt(Math.pow(RED_SPEAKER_X - pos.getX(),2) + Math.pow(RED_SPEAKER_Y - pos.getY(),2));
+        }
+        SmartDashboard.putNumber("distance", distance);
     }
 
     public static Shooter getInstance(){
@@ -178,6 +191,18 @@ public class Shooter extends SubsystemBase {
         targetAngle = Math.toDegrees(Math.atan2(SPEAKER_H , distance));
         turnTo(targetAngle);
         
+    }
+
+    public void alternateAutoAim(){
+        double targetAngle, distance;
+        SwervePoint pos = SwerveLocalizer.getInstance().getCurrentPoint();
+        if(Robot.getAlliance() == Alliance.Blue){
+            distance = Math.sqrt(Math.pow(pos.getX() - BLUE_SPEAKER_X,2) + Math.pow(pos.getY() - BLUE_SPEAKER_Y,2));
+        }
+        else{
+            distance = Math.sqrt(Math.pow(RED_SPEAKER_X - pos.getX(),2) + Math.pow(RED_SPEAKER_Y - pos.getY(),2));
+        }
+        turnTo(m_distanceToAngle.interpolate(distance));
     }
 
 

@@ -29,6 +29,7 @@ import frc.robot.Commands.Intake.IntakeNote;
 import frc.robot.Commands.Shooter.ShootToAmp;
 import frc.robot.Commands.Shooter.ShootToSpeaker;
 import frc.robot.Commands.Shooter.AutomaticShootToSpeaker;
+import frc.robot.Commands.Shooter.CalibrateShooter;
 import frc.robot.Commands.Shooter.ReleaseNote;
 import frc.robot.Commands.Shooter.ShootFromNotSideOfAmp;
 import frc.robot.Commands.Shooter.ShootFromSideOfAmp;
@@ -120,6 +121,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("shoot from not side of amp", new ShootFromNotSideOfAmp().withTimeout(2));
     NamedCommands.registerCommand("release note", new ReleaseNote().withTimeout(0.4));
     NamedCommands.registerCommand("shoot from middle", new ShootToSpeaker().withTimeout(1.5));
+
     
   }
 
@@ -145,6 +147,7 @@ public class RobotContainer {
     operatorLB.whileTrue(extendLeftClimberCommand);//LB
     operatorRT.whileTrue(retractRightClimberCommand);//RT
     operatorLT.whileTrue(retractLeftClimberCommand);//LT
+    operator.povRight().whileTrue(new CalibrateShooter());
 
     
 

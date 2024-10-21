@@ -2,7 +2,6 @@ package frc.robot.Utils.Math;
 
 import java.util.Arrays;
 
-import org.opencv.core.Point;
 
 public class LinearInterpolation {
     private Point[] m_data;

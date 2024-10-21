@@ -60,6 +60,9 @@ public class Robot extends TimedRobot {
     m_autoChooser.addOption("middle auto", new PathPlannerAuto("middle auto"));
     m_autoChooser.addOption("not amp side auto", new PathPlannerAuto("not amp side auto"));
     SmartDashboard.putData("auto", m_autoChooser);
+
+
+    SmartDashboard.putNumber("target angle", 90);
   }
 
   @Override
