@@ -28,6 +28,7 @@ import frc.robot.Commands.Intake.EmitNote;
 import frc.robot.Commands.Intake.IntakeNote;
 import frc.robot.Commands.Shooter.ShootToAmp;
 import frc.robot.Commands.Shooter.ShootToSpeaker;
+import frc.robot.Commands.Shooter.AlternateAutoShootToSpeaker;
 import frc.robot.Commands.Shooter.AutomaticShootToSpeaker;
 import frc.robot.Commands.Shooter.CalibrateShooter;
 import frc.robot.Commands.Shooter.ReleaseNote;
@@ -58,6 +59,7 @@ public class RobotContainer {
   public static final Trigger operatorX = operator.x();
   public static final Trigger operatorY = operator.y();
   public static final Trigger operatorPovUp = operator.povUp();
+  public static final Trigger operatorPovRight = operator.povRight();
   public static final Trigger operatorRB = operator.rightBumper();
   public static final Trigger operatorLB = operator.leftBumper();
   public static final Trigger operatorRT = operator.rightTrigger();
@@ -120,9 +122,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("shoot from side of amp", new ShootFromSideOfAmp().withTimeout(2));
     NamedCommands.registerCommand("shoot from not side of amp", new ShootFromNotSideOfAmp().withTimeout(2));
     NamedCommands.registerCommand("release note", new ReleaseNote().withTimeout(0.4));
-    NamedCommands.registerCommand("shoot from middle", new ShootToSpeaker().withTimeout(1.5));
-
-    
+    NamedCommands.registerCommand("shoot from middle", new ShootToSpeaker().withTimeout(1.5)); 
   }
 
   private void configureBindings() {
@@ -147,7 +147,7 @@ public class RobotContainer {
     operatorLB.whileTrue(extendLeftClimberCommand);//LB
     operatorRT.whileTrue(retractRightClimberCommand);//RT
     operatorLT.whileTrue(retractLeftClimberCommand);//LT
-    operator.povRight().whileTrue(new CalibrateShooter());
+    operatorPovRight.whileTrue(new AlternateAutoShootToSpeaker());
 
     
 

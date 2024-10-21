@@ -27,7 +27,8 @@ public class Shooter extends SubsystemBase {
                          MIN_ANGLE = -49, MAX_ANGLE = 130,
                          BLUE_SPEAKER_X = 0, BLUE_SPEAKER_Y = 5.8928 , //+ (0.01 * (15 * 2.54)
                          RED_SPEAKER_X = 16.54, RED_SPEAKER_Y = 5.8928,
-                         SPEAKER_H = 2.625;
+                         SPEAKER_H = 2.625,
+                         EXTRAPOLATION_SCALAR = 0.27;
 
     private static Shooter m_instance = new Shooter();
     public CANSparkMax m_pivotMotor, m_leftShoot, m_rightShoot, m_containmentMotor;
@@ -71,7 +72,7 @@ public class Shooter extends SubsystemBase {
 
     }
 
-    
+    //k = 0.27
 
     @Override
     public void periodic(){
@@ -113,12 +114,6 @@ public class Shooter extends SubsystemBase {
         m_rightShoot.getPIDController().setReference(6000, ControlType.kVelocity);
         m_leftShoot.getPIDController().setReference(6000, ControlType.kVelocity);
 
-
-    }
-
-    public void shootByRPM(double leftRPM, double rightRPM){
-        m_rightShoot.getPIDController().setReference(rightRPM, ControlType.kVelocity);
-        m_leftShoot.getPIDController().setReference(leftRPM, ControlType.kVelocity);
     }
 
     public void shoot(double speedL, double speedR){
@@ -193,8 +188,11 @@ public class Shooter extends SubsystemBase {
         
     }
 
-    public void alternateAutoAim(){
-        double targetAngle, distance;
+    /**
+     * Gabai this is what we made on monday
+     */
+    public void lerpAutoAim(){
+        double distance;
         SwervePoint pos = SwerveLocalizer.getInstance().getCurrentPoint();
         if(Robot.getAlliance() == Alliance.Blue){
             distance = Math.sqrt(Math.pow(pos.getX() - BLUE_SPEAKER_X,2) + Math.pow(pos.getY() - BLUE_SPEAKER_Y,2));
@@ -204,6 +202,24 @@ public class Shooter extends SubsystemBase {
         }
         turnTo(m_distanceToAngle.interpolate(distance));
     }
+    
+    /**
+     * Gabai this is what i made with nadav
+     * we used the points from the linear interpolation for it
+     */
+    public void extrapolationAutoAim(){
+        double distance;
+        SwervePoint pos = SwerveLocalizer.getInstance().getCurrentPoint();
+        if(Robot.getAlliance() == Alliance.Blue){
+            distance = Math.sqrt(Math.pow(pos.getX() - BLUE_SPEAKER_X,2) + Math.pow(pos.getY() - BLUE_SPEAKER_Y,2));
+        }
+        else{
+            distance = Math.sqrt(Math.pow(RED_SPEAKER_X - pos.getX(),2) + Math.pow(RED_SPEAKER_Y - pos.getY(),2));
+        }
+
+        turnTo(Math.atan2(2.05 - 0.38287, distance -  EXTRAPOLATION_SCALAR * distance * distance));
+    }
+
 
 
 }

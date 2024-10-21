@@ -1,12 +1,9 @@
 package frc.robot.Commands.Shooter;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems.Shooter.Shooter;
 
-public class CalibrateShooter extends Command{
-    public CalibrateShooter(){
-    }
+public class AlternateAutoShootToSpeaker extends Command{
 
     @Override
     public void initialize() {
@@ -15,9 +12,7 @@ public class CalibrateShooter extends Command{
 
     @Override
     public void execute() {
-        double targetAngle = SmartDashboard.getNumber("target angle", 90);
-        Shooter.getInstance().turnTo(targetAngle);
-        
+        Shooter.getInstance().extrapolationAutoAim();
     }
 
     @Override
@@ -29,5 +24,5 @@ public class CalibrateShooter extends Command{
     public void end(boolean interrupted) {
         Shooter.getInstance().stopShoot();
     }
-
+    
 }
