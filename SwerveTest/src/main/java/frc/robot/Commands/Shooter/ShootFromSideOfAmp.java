@@ -7,6 +7,7 @@ public class ShootFromSideOfAmp extends Command{
 
      @Override
     public void initialize() {
+        Shooter.getInstance().turnTo(113);
         Shooter.getInstance().shoot(0.5, 1);
     }
 

@@ -3,6 +3,7 @@ package frc.robot.Subsystems.Shooter;
 import java.util.function.Supplier;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -17,15 +18,15 @@ import frc.robot.Subsystems.Swerve.Swerve;
 import frc.robot.Subsystems.Swerve.SwerveLocalizer;
 import frc.robot.Subsystems.Swerve.SwervePoint;
 import frc.robot.Utils.Math.Funcs;
+import frc.robot.Utils.Math.LinearInterpolation;
 
 public class Shooter extends SubsystemBase {
     private final double 
-
                          INTAKE_SPEED = 0.5, CONTAINMENT_SPEED = 0.5, SHOOT_SPEED = 1, 
                          MIN_ANGLE = -49, MAX_ANGLE = 130,
-                         BLUE_SPEAKER_X = 0, BLUE_SPEAKER_Y = 5.8928 + (0.01 * (15 * 2.54)),
-                         RED_SPEAKER_X = 16.54, RED_SPEAKER_Y = 5.8928 + (0.01 * (15 * 2.54)),
-                         SPEAKER_H = 3.5;
+                         BLUE_SPEAKER_X = 0, BLUE_SPEAKER_Y = 5.8928 , //+ (0.01 * (15 * 2.54)
+                         RED_SPEAKER_X = 16.54, RED_SPEAKER_Y = 5.8928,
+                         SPEAKER_H = 2.625;
 
     private static Shooter m_instance = new Shooter();
     public CANSparkMax m_pivotMotor, m_leftShoot, m_rightShoot, m_containmentMotor;
@@ -33,6 +34,8 @@ public class Shooter extends SubsystemBase {
     private DutyCycleEncoder m_pivotEncoder;
     private PIDController m_angleController;
     private double m_targetAngle;
+    private LinearInterpolation m_distanceToAngle;
+
 
     private Shooter(){
         m_leftShoot = new CANSparkMax(1, MotorType.kBrushless);
@@ -40,6 +43,12 @@ public class Shooter extends SubsystemBase {
         m_leftShoot.restoreFactoryDefaults();
         m_rightShoot.restoreFactoryDefaults();
         m_leftShoot.setInverted(true);
+
+        m_rightShoot.getPIDController().setP(0.1);
+        m_rightShoot.getPIDController().setFF(0.75/ 2.81);
+        m_leftShoot.getPIDController().setP(0.1);
+        m_leftShoot.getPIDController().setFF(0.75/ 2.81);
+
 
         m_pivotMotor = new CANSparkMax(9, MotorType.kBrushless);
         m_containmentMotor = new CANSparkMax(7, MotorType.kBrushless);
@@ -63,9 +72,8 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic(){
-        
         m_angleController.setSetpoint(m_targetAngle);
-        m_pivotMotor.set(-1 * MathUtil.clamp(m_angleController.calculate(m_pivotAngle.get()), -0.25, 0.25));
+        m_pivotMotor.set(-1 * MathUtil.clamp(m_angleController.calculate(m_pivotAngle.get()), -0.26, 0.26));
         
     }
 
@@ -86,18 +94,28 @@ public class Shooter extends SubsystemBase {
     }
 
     public void shoot(){
-        m_rightShoot.set(SHOOT_SPEED);
-        m_leftShoot.set(SHOOT_SPEED);
+        // m_rightShoot.set(SHOOT_SPEED);
+        // m_leftShoot.set(SHOOT_SPEED);
+
+        m_rightShoot.getPIDController().setReference(6000, ControlType.kVelocity);
+        m_leftShoot.getPIDController().setReference(6000, ControlType.kVelocity);
+
+
+    }
+
+    public void shootByRPM(double leftRPM, double rightRPM){
+        m_rightShoot.getPIDController().setReference(rightRPM, ControlType.kVelocity);
+        m_leftShoot.getPIDController().setReference(leftRPM, ControlType.kVelocity);
     }
 
     public void shoot(double speedL, double speedR){
-        m_rightShoot.set(speedL);
-        m_leftShoot.set(speedR);
+        m_rightShoot.set(speedR);
+        m_leftShoot.set(speedL);
     }
 
     public void shootToAmp(){
-        m_rightShoot.set(0.15);
-        m_leftShoot.set(0.15);
+        m_rightShoot.set(0.12);
+        m_leftShoot.set(0.1);
     }
 
     public void stopShoot(){
