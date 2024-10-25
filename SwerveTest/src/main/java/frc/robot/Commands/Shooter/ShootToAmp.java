@@ -8,6 +8,7 @@ public class ShootToAmp extends Command {
     public ShootToAmp(){}
 
     public void initialize(){
+        addRequirements(Shooter.getInstance());
         Shooter.getInstance().turnToAmp();;
         Shooter.getInstance().shootToAmp();
     }

@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Subsystems.Swerve.Swerve;
 import frc.robot.Subsystems.Swerve.SwerveLocalizer;
+import frc.robot.Subsystems.Vision.JetsonHealthChecker;
 import frc.robot.Utils.EverKit.Periodic;
 
 public class Robot extends TimedRobot {
@@ -27,6 +28,7 @@ public class Robot extends TimedRobot {
   public static ArrayList<Periodic> testPeriodicFuncs = new ArrayList<Periodic>();
   public static ArrayList<Periodic> autonomousPeriodicFuncs = new ArrayList<Periodic>();
   public static ArrayList<Periodic> simulationPeriodicFuncs = new ArrayList<Periodic>();
+  private static JetsonHealthChecker m_jetsonHealthChecker = new JetsonHealthChecker(5801);
 
   private Command m_autonomousCommand;
   private RobotContainer m_robotContainer;
@@ -45,8 +47,7 @@ public class Robot extends TimedRobot {
     //create and add robot field data to dashboard
     m_field = new Field2d();
     SmartDashboard.putData("field", m_field);
-    SmartDashboard.putNumber("speed", 1);
-    SmartDashboard.putNumber("angular speed", 180.0);
+    
 
     // m_odometryField = new Field2d();
     // SmartDashboard.putData("odometry", m_odometryField);
@@ -62,7 +63,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("auto", m_autoChooser);
 
 
-    SmartDashboard.putNumber("target angle", 90);
+
   }
 
   @Override

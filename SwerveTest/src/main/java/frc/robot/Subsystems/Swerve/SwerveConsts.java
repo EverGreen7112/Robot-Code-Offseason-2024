@@ -21,7 +21,7 @@ import frc.robot.Utils.Math.Vector2d;
 public interface SwerveConsts{
     // speed values
     public static final double MAX_NORMAL_DRIVE_SPEED = 2.8; // m/s
-    public static final double MAX_TURBO_DRIVE_SPEED = 3.1;
+    public static final double MAX_TURBO_DRIVE_SPEED = 4;
     public static final double MAX_SLOW_DRIVE_SPEED = 1.5;
     public static final double MAX_ANGULAR_SPEED = 180; // deg/s/
     public static final double MIN_SPEED = 0.07;

@@ -28,7 +28,7 @@ public class Shooter extends SubsystemBase {
                          BLUE_SPEAKER_X = 0, BLUE_SPEAKER_Y = 5.8928 , //+ (0.01 * (15 * 2.54)
                          RED_SPEAKER_X = 16.54, RED_SPEAKER_Y = 5.8928,
                          SPEAKER_H = 2.625,
-                         EXTRAPOLATION_SCALAR = 0.27;
+                         EXTRAPOLATION_SCALAR = 0.254;
 
     private static Shooter m_instance = new Shooter();
     public CANSparkMax m_pivotMotor, m_leftShoot, m_rightShoot, m_containmentMotor;
